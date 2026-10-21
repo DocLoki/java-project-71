@@ -1,0 +1,13 @@
+.gradle/
+**/.gradle/
+**/build/
+
+.idea/
+**/.idea/
+*.iml
+*.iws
+*.ipr
+
+local.properties
+.DS_Store
+Thumbs.db
