@@ -1,16 +1,12 @@
 
 package hexlet.code;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
+import java.util.concurrent.Callable;
 
 @Command(
         name = "gendiff",
@@ -18,7 +14,7 @@ import java.util.Map;
         description = "Compares two configuration files and shows a difference.",
         mixinStandardHelpOptions = true
 )
-public class App implements Runnable {
+public class App implements Callable<Integer> {
 
     @Parameters(
             index = "0",
@@ -43,20 +39,9 @@ public class App implements Runnable {
     private String format;
 
     @Override
-    public void run() {
-        try {
-            Map<String, Object> data1 = getData(filepath1);
-            Map<String, Object> data2 = getData(filepath2);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static Map<String, Object> getData(String filepath) throws Exception {
-        String content = Files.readString(Path.of(filepath));
-        ObjectMapper mapper = new ObjectMapper();
-
-        return mapper.readValue(content, new TypeReference<Map<String, Object>>() {});
+    public Integer call() throws Exception {
+        System.out.println(Differ.generate(filepath1, filepath2));
+        return 0;
     }
 
     public static void main(String[] args) {
