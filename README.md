@@ -1,3 +1,6 @@
+
+[![Java CI](https://github.com/DocLoki/java-project-71/actions/workflows/build.yml/badge.svg)](https://github.com/DocLoki/java-project-71/actions/workflows/build.yml)
+
 # Вычислитель отличий (Java)
 
 [![hexlet-check](https://github.com/DocLoki/java-project-71/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/DocLoki/java-project-71/actions)
