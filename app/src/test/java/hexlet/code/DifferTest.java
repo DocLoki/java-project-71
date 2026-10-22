@@ -8,20 +8,39 @@ import org.junit.jupiter.api.Test;
 class DifferTest {
 
   @Test
-  void testGenerate() throws Exception {
+  void testGenerateJson() throws Exception {
     Path file1 = Path.of(getClass().getClassLoader().getResource("file1.json").toURI());
     Path file2 = Path.of(getClass().getClassLoader().getResource("file2.json").toURI());
 
     String expected =
         """
-            {
-              - follow: false
-                host: hexlet.io
-              - proxy: 123.234.53.22
-              - timeout: 50
-              + timeout: 20
-              + verbose: true
-            }""";
+                {
+                  - follow: false
+                    host: hexlet.io
+                  - proxy: 123.234.53.22
+                  - timeout: 50
+                  + timeout: 20
+                  + verbose: true
+                }""";
+
+    assertEquals(expected, Differ.generate(file1.toString(), file2.toString()));
+  }
+
+  @Test
+  void testGenerateYaml() throws Exception {
+    Path file1 = Path.of(getClass().getClassLoader().getResource("file1.yml").toURI());
+    Path file2 = Path.of(getClass().getClassLoader().getResource("file2.yml").toURI());
+
+    String expected =
+        """
+                {
+                  - follow: false
+                    host: hexlet.io
+                  - proxy: 123.234.53.22
+                  - timeout: 50
+                  + timeout: 20
+                  + verbose: true
+                }""";
 
     assertEquals(expected, Differ.generate(file1.toString(), file2.toString()));
   }
