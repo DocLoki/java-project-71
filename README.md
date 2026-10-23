@@ -39,4 +39,4 @@ cd java-project-71
 ## О Хекслете
 
 [Хекслет](https://ru.hexlet.io/) — школа программирования: авторские программы обучения с практикой, поддержкой наставников и реальными проектами, которые остаются в резюме. Этот репозиторий — один из таких проектов.
-![Пример работы gendiff](app/src/main/resources/1.png) ![Пример работы](app/src/main/resources/2.png) 
+![Пример работы gendiff](app/src/main/resources/1.png) ![Пример работы](app/src/main/resources/2.png) ![Пример работы](app/src/main/resources/3.png) ![Пример работы](app/src/main/resources/4.png) 
