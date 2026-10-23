@@ -1,8 +1,11 @@
 package hexlet.code;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class DifferTest {
@@ -104,5 +107,23 @@ class DifferTest {
             Property 'setting3' was updated. From true to 'none'""";
 
     assertEquals(expected, Differ.generate(file1.toString(), file2.toString(), "plain"));
+  }
+
+  @Test
+  void testGenerateJsonFormat() throws Exception {
+    Path file1 = Path.of(getClass().getClassLoader().getResource("nested1.json").toURI());
+    Path file2 = Path.of(getClass().getClassLoader().getResource("nested2.json").toURI());
+
+    String result = Differ.generate(file1.toString(), file2.toString(), "json");
+
+    com.fasterxml.jackson.databind.ObjectMapper mapper =
+        new com.fasterxml.jackson.databind.ObjectMapper();
+
+    List<?> parsed = mapper.readValue(result, List.class);
+
+    assertFalse(parsed.isEmpty());
+    assertTrue(result.startsWith("["));
+    assertTrue(result.contains("\"status\""));
+    assertTrue(result.contains("\"changed\""));
   }
 }
