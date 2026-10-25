@@ -1,6 +1,5 @@
 
 plugins {
-    id("java")
     id("application")
     id("com.github.ben-manes.versions") version "0.53.0"
     id("com.diffplug.spotless") version "7.0.2"

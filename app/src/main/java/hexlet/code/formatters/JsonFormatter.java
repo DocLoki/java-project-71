@@ -1,6 +1,5 @@
 package hexlet.code.formatters;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.DiffBuilder;
 import java.util.LinkedHashMap;
@@ -9,15 +8,12 @@ import java.util.Map;
 
 public class JsonFormatter {
 
-  public static String format(List<Map<String, Object>> diff) {
+  public static String format(List<Map<String, Object>> diff) throws Exception {
+
     List<Map<String, Object>> normalized =
         diff.stream().map(JsonFormatter::normalizeEntry).toList();
 
-    try {
-      return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(normalized);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
+    return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(normalized);
   }
 
   private static Map<String, Object> normalizeEntry(Map<String, Object> entry) {

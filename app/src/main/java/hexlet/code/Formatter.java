@@ -8,13 +8,13 @@ import java.util.Map;
 
 public class Formatter {
 
-  public static String format(List<Map<String, Object>> diff, String formatName) {
+  public static String format(List<Map<String, Object>> diff, String formatName) throws Exception {
 
     return switch (formatName) {
       case "stylish" -> StylishFormatter.format(diff);
       case "plain" -> PlainFormatter.format(diff);
       case "json" -> JsonFormatter.format(diff);
-      default -> throw new IllegalArgumentException("Unknown format: " + formatName);
+      default -> throw new Exception("Unknown format: " + formatName);
     };
   }
 }

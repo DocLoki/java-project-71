@@ -9,7 +9,7 @@ import java.util.TreeSet;
 public class DiffBuilder {
 
   public static List<Map<String, Object>> build(
-      Map<String, Object> data1, Map<String, Object> data2) {
+      Map<String, Object> data1, Map<String, Object> data2) throws Exception {
 
     TreeSet<String> keys = new TreeSet<>();
     keys.addAll(data1.keySet());
@@ -55,7 +55,7 @@ public class DiffBuilder {
                 "removed",
                 "value",
                 data1.get(key) == null ? NullValue.INSTANCE : data1.get(key)));
-      } else {
+      } else if (existsInSecond) {
         result.add(
             Map.of(
                 "key",
@@ -64,6 +64,8 @@ public class DiffBuilder {
                 "added",
                 "value",
                 data2.get(key) == null ? NullValue.INSTANCE : data2.get(key)));
+      } else {
+        throw new Exception("Unknown key: " + key);
       }
     }
 

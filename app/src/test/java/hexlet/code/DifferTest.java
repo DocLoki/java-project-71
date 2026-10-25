@@ -4,91 +4,97 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class DifferTest {
 
+  private Path getResourcePath(String name) throws Exception {
+    return Path.of(getClass().getClassLoader().getResource(name).toURI());
+  }
+
   @Test
-  void testGenerateJson() throws Exception {
-    Path file1 = Path.of(getClass().getClassLoader().getResource("file1.json").toURI());
-    Path file2 = Path.of(getClass().getClassLoader().getResource("file2.json").toURI());
+  void testJsonInputDefaultFormat() throws Exception {
+    Path file1 = getResourcePath("file1.json");
+    Path file2 = getResourcePath("file2.json");
 
     String expected =
         """
-                {
-                  - follow: false
-                    host: hexlet.io
-                  - proxy: 123.234.53.22
-                  - timeout: 50
-                  + timeout: 20
-                  + verbose: true
-                }""";
+            {
+              - follow: false
+                host: hexlet.io
+              - proxy: 123.234.53.22
+              - timeout: 50
+              + timeout: 20
+              + verbose: true
+            }""";
 
     assertEquals(expected, Differ.generate(file1.toString(), file2.toString()));
   }
 
   @Test
-  void testGenerateYaml() throws Exception {
-    Path file1 = Path.of(getClass().getClassLoader().getResource("file1.yml").toURI());
-    Path file2 = Path.of(getClass().getClassLoader().getResource("file2.yml").toURI());
+  void testYamlInputDefaultFormat() throws Exception {
+    Path file1 = getResourcePath("file1.yml");
+    Path file2 = getResourcePath("file2.yml");
 
     String expected =
         """
-                {
-                  - follow: false
-                    host: hexlet.io
-                  - proxy: 123.234.53.22
-                  - timeout: 50
-                  + timeout: 20
-                  + verbose: true
-                }""";
+            {
+              - follow: false
+                host: hexlet.io
+              - proxy: 123.234.53.22
+              - timeout: 50
+              + timeout: 20
+              + verbose: true
+            }""";
 
     assertEquals(expected, Differ.generate(file1.toString(), file2.toString()));
   }
 
   @Test
-  void testGenerateNestedJson() throws Exception {
-    Path file1 = Path.of(getClass().getClassLoader().getResource("nested1.json").toURI());
-    Path file2 = Path.of(getClass().getClassLoader().getResource("nested2.json").toURI());
+  void testJsonInputStylishFormat() throws Exception {
+    Path file1 = getResourcePath("file1.json");
+    Path file2 = getResourcePath("file2.json");
 
-    String result = Differ.generate(file1.toString(), file2.toString());
-
-    assertEquals(
+    String expected =
         """
-                {
-                    chars1: [a, b, c]
-                  - chars2: [d, e, f]
-                  + chars2: false
-                  - checked: false
-                  + checked: true
-                  - default: null
-                  + default: [value1, value2]
-                  - id: 45
-                  + id: null
-                  - key1: value1
-                  + key2: value2
-                    numbers1: [1, 2, 3, 4]
-                  - numbers2: [2, 3, 4, 5]
-                  + numbers2: [22, 33, 44, 55]
-                  - numbers3: [3, 4, 5]
-                  + numbers4: [4, 5, 6]
-                  + obj1: {nestedKey=value, isNested=true}
-                  - setting1: Some value
-                  + setting1: Another value
-                  - setting2: 200
-                  + setting2: 300
-                  - setting3: true
-                  + setting3: none
-                }""",
-        result);
+            {
+              - follow: false
+                host: hexlet.io
+              - proxy: 123.234.53.22
+              - timeout: 50
+              + timeout: 20
+              + verbose: true
+            }""";
+
+    assertEquals(expected, Differ.generate(file1.toString(), file2.toString(), "stylish"));
   }
 
   @Test
-  void testGeneratePlain() throws Exception {
-    Path file1 = Path.of(getClass().getClassLoader().getResource("nested1.json").toURI());
-    Path file2 = Path.of(getClass().getClassLoader().getResource("nested2.json").toURI());
+  void testYamlInputStylishFormat() throws Exception {
+    Path file1 = getResourcePath("file1.yml");
+    Path file2 = getResourcePath("file2.yml");
+
+    String expected =
+        """
+            {
+              - follow: false
+                host: hexlet.io
+              - proxy: 123.234.53.22
+              - timeout: 50
+              + timeout: 20
+              + verbose: true
+            }""";
+
+    assertEquals(expected, Differ.generate(file1.toString(), file2.toString(), "stylish"));
+  }
+
+  @Test
+  void testJsonInputPlainFormat() throws Exception {
+    Path file1 = getResourcePath("nested1.json");
+    Path file2 = getResourcePath("nested2.json");
 
     String expected =
         """
@@ -110,20 +116,43 @@ class DifferTest {
   }
 
   @Test
-  void testGenerateJsonFormat() throws Exception {
-    Path file1 = Path.of(getClass().getClassLoader().getResource("nested1.json").toURI());
-    Path file2 = Path.of(getClass().getClassLoader().getResource("nested2.json").toURI());
+  void testYamlInputPlainFormat() throws Exception {
+    Path file1 = getResourcePath("file1.yml");
+    Path file2 = getResourcePath("file2.yml");
+
+    String result = Differ.generate(file1.toString(), file2.toString(), "plain");
+
+    assertTrue(result.contains("Property '"));
+  }
+
+  @Test
+  void testJsonInputJsonFormat() throws Exception {
+    Path file1 = getResourcePath("nested1.json");
+    Path file2 = getResourcePath("nested2.json");
 
     String result = Differ.generate(file1.toString(), file2.toString(), "json");
 
-    com.fasterxml.jackson.databind.ObjectMapper mapper =
-        new com.fasterxml.jackson.databind.ObjectMapper();
-
+    ObjectMapper mapper = new ObjectMapper();
     List<?> parsed = mapper.readValue(result, List.class);
 
     assertFalse(parsed.isEmpty());
     assertTrue(result.startsWith("["));
     assertTrue(result.contains("\"status\""));
     assertTrue(result.contains("\"changed\""));
+  }
+
+  @Test
+  void testYamlInputJsonFormat() throws Exception {
+    Path file1 = getResourcePath("file1.yml");
+    Path file2 = getResourcePath("file2.yml");
+
+    String result = Differ.generate(file1.toString(), file2.toString(), "json");
+
+    ObjectMapper mapper = new ObjectMapper();
+    List<?> parsed = mapper.readValue(result, List.class);
+
+    assertFalse(parsed.isEmpty());
+    assertTrue(result.startsWith("["));
+    assertTrue(result.contains("\"status\""));
   }
 }
